@@ -33,5 +33,5 @@ a script plugin.
 
 `apply from: https://github.com/rivancic/gradle-versioned-script-plugin/blob/v1.0/scriptPlugin.gradle`
 
-Notice tag v1.0 name following after a blob/ path in the URL. Now you can expect that functionality of scriptPlugin.gradle
+Notice tag **v1.0** name following after a **blob/** path in the URL. Now you can expect that functionality of scriptPlugin.gradle
 will never change. With using versions you can guarantee stability to your build process.
