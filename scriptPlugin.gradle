@@ -37,9 +37,6 @@ tasks.register('sortFiles') {
     logger.info "==== Sorting Files ===="
     logger.info ""
 
-    // Show this in the example
-    // https://stackoverflow.com/questions/37101589/how-to-read-a-properties-files-and-use-the-values-in-project-gradle-script
-
     file(project.ext['tasks.files.folder'])
         .listFiles({ file -> file.isFile() && !file.isHidden() } as FileFilter)
         .each {
