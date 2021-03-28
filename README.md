@@ -35,3 +35,11 @@ a script plugin.
 
 Notice tag **v1.0** name following after a **gradle-versioned-script-plugin/** path in the URL which represents repository name. Now you can expect that functionality of scriptPlugin.gradle
 will never change. With using versions you can guarantee stability to your build process.
+
+## Releases
+
+For all the versions and related changes go through the [Release page](https://github.com/rivancic/gradle-versioned-script-plugin/releases)
+
+## Content
+
+To see what the script plugin can do check comments in the [scriptPlugin.gradle file.](scriptPlugin.gradle)
