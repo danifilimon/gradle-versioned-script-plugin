@@ -44,6 +44,8 @@ tasks.register('sortFiles') {
     logger.quiet "==== Sorting Files ===="
     logger.quiet ""
 
+    def fileMapper = getFileDirectoryMapper(project, logger)
+
     file(project.ext['tasks.files.folder'])
         .listFiles({file -> file.isFile() && !file.isHidden() } as FileFilter)
         .each {
@@ -51,7 +53,6 @@ tasks.register('sortFiles') {
           logger.quiet ("Filename: " + it.name)
 
           // Get directory for the file based on the sorting type
-          def fileMapper = getFileDirectoryMapper(project, logger)
           def directory = fileMapper.getDirectory(it)
 
           // Create new directory inside build folder

@@ -20,7 +20,7 @@ changes to the remote script plugin. If script plugin is referenced with the tag
 To apply this script plugin in other projects you have to use the following apply command in 
 your gradle script file:
 
-`apply from: 'https://raw.githubusercontent.com/rivancic/gradle-versioned-script-plugin/master/filesPlugin.gradle'`
+`apply from: 'https://raw.githubusercontent.com/rivancic/gradle-versioned-script-plugin/master/gradle/filesPlugin.gradle'`
 
 As this is versioned file in git repository you will always fetch the latest version of the script.
 Maybe the new version of the script contains changes that require different configuration, has behaviour that
@@ -32,7 +32,7 @@ To mitigate risks mentioned above you can use git tags, to mark different versio
 When applying remote script plugin in your Gradle build script you can refer to specific version of
 a script plugin.
 
-`apply from: 'https://raw.githubusercontent.com/rivancic/gradle-versioned-script-plugin/v1.0/filesPlugin.gradle'`
+`apply from: 'https://raw.githubusercontent.com/rivancic/gradle-versioned-script-plugin/0.1.0/gradle/filesPlugin.gradle'`
 
 Notice tag **v1.0** name following after a **gradle-versioned-script-plugin/** path in the URL which represents repository name. Now you can expect that functionality of scriptPlugin.gradle
 will never change. With using versions you can guarantee stability to your build process.
@@ -46,4 +46,4 @@ For all the versions and related changes go through the [Release page](https://g
 
 ## Content
 
-To see what the script plugin can do check comments in the [filesPlugin.gradle file.](filesPlugin.gradle)
+To see what the script plugin can do check comments in the [filesPlugin.gradle file.](gradle/filesPlugin.gradle)
