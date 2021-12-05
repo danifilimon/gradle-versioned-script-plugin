@@ -6,8 +6,12 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
+logger.quiet("=============================================================================================")
+logger.quiet("                               Files Plugin                                                  ")
+logger.quiet("=============================================================================================")
+
 /**
- * This build script contains two tasks. Main functionality is sorting files by their extension or creation date.
+ * This build script contains two tasks. Main functionality is sorting files by their creation date or extension.
  *
  * Tasks are grouped into "files" group.
  *
@@ -16,8 +20,8 @@ import java.time.format.DateTimeFormatter
  */
 
 /**
- * This method sorts files inside specific directory. It does that in the source directory directly and doesn't use
- * build directory. Files are being sorted based on their extension or creation date. Default sorting type is by creation date.
+ * This method sorts files from specific directory and copies them to build/files directory.
+ * Files are being sorted based on their extension or creation date. Default sorting type is by creation date.
  * One can explicitly define sorting type with setting following property key [tasks.files.sortType] to value:
  * <ul>
  *     <li>date</li>
@@ -27,34 +31,45 @@ import java.time.format.DateTimeFormatter
  * Files are being resolved with the Project#file() method, as this way we get correct path to the relative path.
  * Only none hidden files are taken into consideration.
  *
- * Based on sorting type new subdirectory is created and file is moved to matching subdirectory.
+ * Based on sorting type new subdirectory is created in build target and file is copied to matching subdirectory.
  * Name of the subdirectory is defined with FileDirectoryMapper.
  */
 tasks.register('sortFiles') {
   group = "files"
-  description = "Sorts files in given directory into subdirectories based on the sorting type [date,extension]"
+  description = "Sorts files in given directory into build/files subdirectories based on the sorting type [date,extension]"
+
+  dependsOn tasks.named("clean")
+
   doLast { // action that will be executed
-    logger.info "==== Sorting Files ===="
-    logger.info ""
+    logger.quiet "==== Sorting Files ===="
+    logger.quiet ""
 
     file(project.ext['tasks.files.folder'])
-        .listFiles({ file -> file.isFile() && !file.isHidden() } as FileFilter)
+        .listFiles({file -> file.isFile() && !file.isHidden() } as FileFilter)
         .each {
+
+          logger.quiet ("Filename: " + it.name)
 
           // Get directory for the file based on the sorting type
           def fileMapper = getFileDirectoryMapper(project, logger)
           def directory = fileMapper.getDirectory(it)
 
-          // Create dir of that extension
-          mkdir "files/" + directory + "/"
+          // Create new directory inside build folder
+          mkdir project.layout.buildDirectory.dir("files" + "/" + directory + "/")
 
-          // Move file to that directory
-          Files.move(it.toPath(), Paths.get(files("files/" + directory + "/" + it.getName()).asPath), StandardCopyOption.REPLACE_EXISTING)
+          // Copy file to sorted directory inside build directory
+          Files.copy(it.toPath(), project.layout.buildDirectory.dir("files" + "/" + directory + "/" + it.getName()).get().asFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
         }
 
-    logger.info ""
-    logger.info "======================="
+    logger.quiet ""
+    logger.quiet "======================="
   }
+}
+
+tasks.register('clean', Delete) {
+  group = "files"
+  description = "Clean build directory"
+  delete project.layout.buildDirectory
 }
 
 /**
@@ -73,10 +88,10 @@ static FileDirectoryMapper getFileDirectoryMapper(Project project, Logger logger
     } else if (sortType == "date") {
       return new FileDirectoryDateMapper()
     } else {
-      throw new InvalidUserDataException("Invalid property tasks.files.type value provided [" + sortType + "]. Valid values are ['extension','date']")
+      throw new InvalidUserDataException("Invalid property tasks.files.sortType value provided [" + sortType + "]. Valid values are ['extension','date']")
     }
   } else {
-    logger.info("Property [tasks.files.sortType] isn't set, default sorting will be done by creation date")
+    logger.quiet("Property [tasks.files.sortType] isn't set, default sorting will be done by creation date")
     return new FileDirectoryDateMapper()
   }
 }
@@ -112,57 +127,14 @@ class FileDirectoryExtensionMapper implements FileDirectoryMapper {
   }
 
   /**
-   * Get file extension from its file name
+   * Get file extension from its file name.
+   *
+   * If filename is image.jpg then the method will return "jpg".
    *
    * @param filename from which extension will be extracted
    * @return extension of the file
    */
   static String getExtensionOf(String filename) {
     return filename.substring(filename.lastIndexOf(".") + 1)
-  }
-}
-
-/**
- * Is un-sorting the files, which does exactly the opposite of the sortFiles task. It grabs all the files in subdirectories and
- * moves them tot he root directory. Subdirectories are deleted.
- */
-task unSortFiles {
-  group = "files"
-  description = "Reverts sorting of files; moves all files back to root of the given directory"
-
-  doLast {
-    logger.info "==== Un-Sorting Files ===="
-    logger.info ""
-
-    def rootFile = file(project.ext['tasks.files.folder'])
-    unSortRecursively(rootFile, rootFile.toPath())
-
-    logger.info ""
-    logger.info "======================="
-  }
-}
-
-/**
- * It recursively walks through directories moves files to the root directory and deletes subdirectories.
- * @param directory current directory to be un-sorted
- * @param rootDirectory where the files should be moved
- */
-void unSortRecursively(File directory, java.nio.file.Path rootDirectory) {
-  directory.listFiles().each {
-
-    // If its file move it back to root directory
-    if (it.isFile() && !it.isHidden()) {
-      Files.move(it.toPath(), Paths.get(rootDirectory.toString(), it.getName()), StandardCopyOption.REPLACE_EXISTING)
-    }
-
-    // Remove directories
-    if (it.isDirectory()) {
-
-      // Go through it
-      unSortRecursively it, rootDirectory
-
-      // Remove it
-      it.delete()
-    }
   }
 }
