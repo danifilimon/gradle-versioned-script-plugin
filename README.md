@@ -34,11 +34,11 @@ a script plugin.
 
 `apply from: 'https://raw.githubusercontent.com/rivancic/gradle-versioned-script-plugin/0.1.0/gradle/filesPlugin.gradle'`
 
-Notice tag **v1.0** name following after a **gradle-versioned-script-plugin/** path in the URL which represents repository name. Now you can expect that functionality of scriptPlugin.gradle
+Notice tag **0.1.0** name following after a **gradle-versioned-script-plugin/** path in the URL which represents repository name. Now you can expect that functionality of scriptPlugin.gradle
 will never change. With using versions you can guarantee stability to your build process.
 
-Note that the plugin is resolved by the URL that is provided, version will interpolated and call the exact URL that should be
-available to call from your network. You can not provide any dynamic plugin version like you can for resolving dependencies.
+Note that the plugin is resolved by the URL that is provided, version will be interpolated and call the exact URL that should be
+accessible from your network.
 
 ## Releases
 

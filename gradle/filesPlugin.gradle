@@ -88,6 +88,8 @@ static FileDirectoryMapper getFileDirectoryMapper(Project project, Logger logger
       return new FileDirectoryExtensionMapper()
     } else if (sortType == "date") {
       return new FileDirectoryDateMapper()
+    } else if (sortType == "alphabet") {
+      return new FileDirectoryAlphabetMapper()
     } else {
       throw new InvalidUserDataException("Invalid property tasks.files.sortType value provided [" + sortType + "]. Valid values are ['extension','date']")
     }
@@ -137,5 +139,16 @@ class FileDirectoryExtensionMapper implements FileDirectoryMapper {
    */
   static String getExtensionOf(String filename) {
     return filename.substring(filename.lastIndexOf(".") + 1)
+  }
+}
+
+/**
+ * Maps file initial to alphabetical ordered directory
+ */
+class FileDirectoryAlphabetMapper implements FileDirectoryMapper {
+
+  @Override
+  String getDirectory(File file) {
+    return file.getName().substring(0,1);
   }
 }
