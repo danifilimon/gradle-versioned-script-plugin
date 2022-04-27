@@ -1,2 +1,1 @@
 rootProject.name = 'gradle-versioned-script-plugin'
-rootProject.buildFileName= 'gradle/filesPlugin.gradle'
